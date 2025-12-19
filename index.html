@@ -3,196 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Precificação | Jaci Brechó</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Calculadora Jaci & Ampla 2025</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --primary: #8d6e63;
-            --secondary: #d7ccc8;
-            --accent: #5d4037;
-            --bg: #fdfbf9;
-            --text: #3e2723;
-            --white: #ffffff;
+            /* PALETA DE CORES AMPLA */
+            --ampla-blue: #002855;    /* Azul Marinho Profissional */
+            --ampla-gold: #d4af37;    /* Dourado para Destaques */
+            --bg-light: #f8fafc;      /* Fundo da página */
+            --card-in: #ffffff;       /* Fundo do painel de entrada */
+            --text-main: #1e293b;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Poppins', sans-serif; background-color: var(--bg); color: var(--text); line-height: 1.6; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-light); color: var(--text-main); display: flex; justify-content: center; padding: 20px; min-height: 100vh; }
+
+        /* CONTAINER PRINCIPAL */
+        .calculator-card {
+            width: 100%;
+            max-width: 1050px;
+            display: grid;
+            grid-template-columns: 1fr 400px; /* Divide em Entrada e Resultado */
+            background: var(--card-in);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            margin: auto;
+        }
+
+        /* RESPONSIVIDADE PARA CELULAR */
+        @media (max-width: 850px) {
+            .calculator-card { grid-template-columns: 1fr; }
+            body { padding: 10px; }
+        }
+
+        /* LADO ESQUERDO: ENTRADA DE DADOS */
+        .input-panel { padding: 40px; }
         
-        .container { max-width: 900px; margin: 40px auto; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .logo { height: 50px; object-fit: contain; }
+
+        h2 { font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: var(--ampla-blue); margin-bottom: 25px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; }
+
+        .group { margin-bottom: 20px; }
+        label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; margin-bottom: 8px; letter-spacing: 1px; }
         
-        header { text-align: center; margin-bottom: 40px; }
-        header h1 { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--accent); margin-bottom: 10px; }
-        header p { color: var(--primary); font-style: italic; }
+        select, input {
+            width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 1rem; transition: 0.3s;
+        }
+        select:focus, input:focus { border-color: var(--ampla-gold); outline: none; background: #fffdfa; }
 
-        .calculator-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-        @media (max-width: 768px) { .calculator-grid { grid-template-columns: 1fr; } }
+        /* SELETOR DE MARGEM (SLIDER) */
+        .margin-box { background: #f1f5f9; padding: 20px; border-radius: 16px; margin-top: 10px; }
+        .margin-info { display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 10px; color: var(--ampla-blue); }
+        input[type="range"] { accent-color: var(--ampla-blue); cursor: pointer; }
 
-        .card { background: var(--white); padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .card h2 { margin-bottom: 20px; font-size: 1.2rem; border-bottom: 2px solid var(--secondary); padding-bottom: 10px; }
+        /* LADO DIREITO: RESULTADO (ESTILO DASHBOARD) */
+        .result-panel {
+            background: var(--ampla-blue);
+            color: white;
+            padding: 50px 30px;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+        }
 
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 5px; }
-        input, select { width: 100%; padding: 12px; border: 1px solid var(--secondary); border-radius: 8px; font-size: 1rem; color: var(--text); }
-        input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px var(--secondary); }
+        .price-label { font-size: 12px; text-transform: uppercase; letter-spacing: 3px; opacity: 0.7; margin-bottom: 10px; }
+        .price-value { font-family: 'Cormorant Garamond', serif; font-size: 4.5rem; color: var(--ampla-gold); font-weight: 700; margin-bottom: 30px; }
 
-        .checkbox-group { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
-        .checkbox-group input { width: auto; }
+        .data-grid { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 20px; margin-top: auto; }
+        .data-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 14px; }
+        .data-item:last-child { border: none; font-weight: 700; color: var(--ampla-gold); }
 
-        .results { background: var(--accent); color: var(--white); }
-        .results h2 { border-color: rgba(255,255,255,0.2); }
-        .result-item { display: flex; justify-content: space-between; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .result-item.total { border-bottom: none; font-size: 1.4rem; font-weight: 700; color: #e0f2f1; margin-top: 20px; }
-        
-        .suggested-prices { margin-top: 30px; }
-        .price-box { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; margin-bottom: 10px; text-align: center; }
-        .price-box span { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
-        .price-box strong { font-size: 1.5rem; }
-
-        .badge { background: var(--secondary); color: var(--accent); padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; float: right; }
+        .footer { margin-top: 40px; font-size: 10px; opacity: 0.5; text-transform: uppercase; letter-spacing: 1px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <h1>Jaci Brechó</h1>
-        <p>Precificação Inteligente & Sustentável</p>
-    </header>
+<div class="calculator-card">
+    
+    <div class="input-panel">
+        <div class="header">
+            <img src="jaci.png" alt="Logo Jaci" class="logo" onerror="this.after('JACI BRECHÓ'); this.remove()">
+            <img src="ampla.png" alt="Logo Ampla" class="logo" onerror="this.after('AMPLA'); this.remove()">
+        </div>
 
-    <div class="calculator-grid">
-        <div class="card">
-            <h2>Dados da Peça</h2>
-            
-            <div class="form-group">
-                <label>Categoria do Produto</label>
-                <select id="categoria" onchange="calculate()">
-                    <option value="43.13">Vintage</option>
-                    <option value="24.78">Acessório</option>
-                    <option value="48.79">Marcas</option>
-                    <option value="45.60">Calçados</option>
-                    <option value="38.00">Corpo Todo</option>
-                    <option value="40.12">Parte de Cima</option>
-                    <option value="44.08">Parte de Baixo</option>
-                </select>
+        <h2>Simulador de Preços 2025</h2>
+
+        <div class="group">
+            <label>Tipo de Peça (Categoria)</label>
+            <select id="cat" onchange="smartAdjust()">
+                <option value="43.12" data-m="75">Vintage (Peça Exclusiva)</option>
+                <option value="48.78" data-m="70">Grife / Marcas</option>
+                <option value="45.60" data-m="62">Calçados</option>
+                <option value="40.12" data-m="55">Parte de Cima (Blusas/Tops)</option>
+                <option value="44.07" data-m="58">Parte de Baixo (Jeans/Saias)</option>
+                <option value="24.77" data-m="80">Acessórios</option>
+            </select>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="group">
+                <label>Preço Pago (R$)</label>
+                <input type="number" id="compra" value="15.00" oninput="calc()">
             </div>
-
-            <div class="form-group">
-                <label>Valor de Compra (R$)</label>
-                <input type="number" id="valorCompra" value="10.00" step="0.01" oninput="calculate()">
-            </div>
-
-            <div class="form-group">
-                <label>Embalagem (Média)</label>
-                <input type="number" id="embalagem" value="4.00" step="0.01" oninput="calculate()">
-            </div>
-
-            <div class="form-group">
-                <label>Limpeza</label>
-                <input type="number" id="limpeza" value="1.82" step="0.01" oninput="calculate()">
-            </div>
-
-            <div class="form-group">
-                <label>Reparos / Costureira</label>
-                <input type="number" id="reparos" value="0.00" step="0.01" oninput="calculate()">
-            </div>
-
-            <hr style="margin: 20px 0; border: 0; border-top: 1px solid var(--secondary);">
-
-            <div class="form-group">
-                <label>Custo Fixo Mensal (Base)</label>
-                <input type="number" id="custoFixoMensal" value="1224.45" step="0.01" oninput="calculate()">
-            </div>
-            <div class="form-group">
-                <label>Meta de Peças/Mês</label>
-                <input type="number" id="vendasMes" value="40" oninput="calculate()">
-            </div>
-
-            <div class="checkbox-group">
-                <input type="checkbox" id="aplicarCustoFixo" checked onchange="calculate()">
-                <label for="aplicarCustoFixo">Aplicar Custo Fixo nesta peça?</label>
+            <div class="group">
+                <label>Limpeza/Reparo (R$)</label>
+                <input type="number" id="limpeza" value="5.00" oninput="calc()">
             </div>
         </div>
 
-        <div class="card results">
-            <h2>Resumo de Custos</h2>
-            
-            <div class="result-item">
-                <span>Custo Variável</span>
-                <span id="resVariavel">R$ 0,00</span>
+        <div class="margin-box">
+            <div class="margin-info">
+                <span>Margem de Lucro</span>
+                <span id="txt-m">70%</span>
             </div>
-            
-            <div class="result-item">
-                <span>Rateio Fixo/Peça</span>
-                <span id="resFixo">R$ 0,00</span>
+            <input type="range" id="margem" min="10" max="90" value="70" oninput="updateM(this.value)">
+            <p style="font-size: 10px; color: #64748b; margin-top: 10px;">*Ajuste a margem conforme a raridade da peça.</p>
+        </div>
+
+        <div class="group" style="margin-top: 20px;">
+            <label>Custo Fixo Mensal (Rateio)</label>
+            <input type="number" id="fixo" value="30.61" oninput="calc()">
+        </div>
+    </div>
+
+    <div class="result-panel">
+        <span class="price-label">Preço de Venda Sugerido</span>
+        <div class="price-value" id="res-venda">R$ 0,00</div>
+
+        <div class="data-grid">
+            <div class="data-item">
+                <span>Investimento Unitário</span>
+                <span id="res-custo">R$ 0,00</span>
             </div>
-
-            <div class="result-item total">
-                <span>Custo Total</span>
-                <span id="resTotal">R$ 0,00</span>
+            <div class="data-item">
+                <span>Custo Fixo (Operação)</span>
+                <span id="res-fixo">R$ 0,00</span>
             </div>
-
-            <div class="suggested-prices">
-                <h2>Sugestões de Venda</h2>
-                
-                <div class="price-box">
-                    <span>Lucro 2x (Markup)</span>
-                    <strong id="preco2x">R$ 0,00</strong>
-                </div>
-
-                <div class="price-box">
-                    <span>Lucro 3x (Markup)</span>
-                    <strong id="preco3x">R$ 0,00</strong>
-                </div>
-
-                <div class="price-box" style="background: #4caf50;">
-                    <span>Margem 30% (Comercial)</span>
-                    <strong id="precoMargem">R$ 0,00</strong>
-                </div>
-
-                <div style="margin-top: 20px; font-size: 0.85rem; opacity: 0.8; text-align: center;">
-                    Ticket Médio da Categoria: <span id="resTicketMedio">R$ 0,00</span>
-                </div>
+            <div class="data-item">
+                <span>Lucro Bruto Previsto</span>
+                <span id="res-lucro">R$ 0,00</span>
             </div>
+        </div>
+
+        <div style="margin-top: 20px; font-size: 12px;">
+            Multiplicador (Markup): <strong id="res-markup" style="color:var(--ampla-gold)">1.0x</strong>
+        </div>
+
+        <div class="footer">
+            ESTRATÉGIA: AMPLA CONSULTORIA<br>
+            CURADORIA: JACI BRECHÓ &copy; 2025
         </div>
     </div>
 </div>
 
 <script>
-    function calculate() {
-        // Inputs
-        const valorCompra = parseFloat(document.getElementById('valorCompra').value) || 0;
-        const embalagem = parseFloat(document.getElementById('embalagem').value) || 0;
-        const limpeza = parseFloat(document.getElementById('limpeza').value) || 0;
-        const reparos = parseFloat(document.getElementById('reparos').value) || 0;
-        const custoFixoMensal = parseFloat(document.getElementById('custoFixoMensal').value) || 0;
-        const vendasMes = parseInt(document.getElementById('vendasMes').value) || 1;
-        const aplicarFixo = document.getElementById('aplicarCustoFixo').checked;
-        const ticketMedio = parseFloat(document.getElementById('categoria').value);
-
-        // Cálculos
-        const custoVariavel = valorCompra + embalagem + limpeza + reparos;
-        const custoFixoUnitario = aplicarFixo ? (custoFixoMensal / vendasMes) : 0;
-        const custoTotal = custoVariavel + custoFixoUnitario;
-
-        // Sugestões de Preço
-        const preco2x = custoTotal * 2;
-        const preco3x = custoTotal * 3;
-        const precoMargem30 = custoTotal / (1 - 0.30); // Margem de 30% sobre o preço final
-
-        // Atualizar UI
-        document.getElementById('resVariavel').innerText = 'R$ ' + custoVariavel.toFixed(2);
-        document.getElementById('resFixo').innerText = 'R$ ' + custoFixoUnitario.toFixed(2);
-        document.getElementById('resTotal').innerText = 'R$ ' + custoTotal.toFixed(2);
-        
-        document.getElementById('preco2x').innerText = 'R$ ' + preco2x.toFixed(2);
-        document.getElementById('preco3x').innerText = 'R$ ' + preco3x.toFixed(2);
-        document.getElementById('precoMargem').innerText = 'R$ ' + precoMargem30.toFixed(2);
-        document.getElementById('resTicketMedio').innerText = 'R$ ' + ticketMedio.toFixed(2);
+    // Função para atualizar o texto da margem
+    function updateM(v) {
+        document.getElementById('txt-m').innerText = v + "%";
+        calc();
     }
 
-    // Inicializar
-    calculate();
+    // Inteligência: ajusta margem e custo fixo ao mudar categoria
+    function smartAdjust() {
+        const s = document.getElementById('cat');
+        const opt = s.options[s.selectedIndex];
+        const mSugerida = opt.getAttribute('data-m');
+        
+        document.getElementById('margem').value = mSugerida;
+        document.getElementById('txt-m').innerText = mSugerida + "%";
+
+        // Regra da planilha: Acessórios não pagam custo fixo total
+        if(opt.text.includes("Acessórios")) {
+            document.getElementById('fixo').value = 0;
+        } else {
+            document.getElementById('fixo').value = 30.61;
+        }
+        calc();
+    }
+
+    // Cálculo Principal
+    function calc() {
+        const vCompra = parseFloat(document.getElementById('compra').value) || 0;
+        const vLimpeza = parseFloat(document.getElementById('limpeza').value) || 0;
+        const vFixo = parseFloat(document.getElementById('fixo').value) || 0;
+        const vMargem = parseFloat(document.getElementById('margem').value) || 0;
+
+        const custoTotal = vCompra + vLimpeza + vFixo;
+        
+        // Fórmula de Margem sobre Preço (Venda)
+        // Preço = Custo / (1 - Margem%)
+        const precoVenda = custoTotal / (1 - (vMargem / 100));
+        const lucro = precoVenda - custoTotal;
+        const markup = precoVenda / custoTotal;
+
+        const formatar = (n) => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+        // UI
+        document.getElementById('res-venda').innerText = formatar(precoVenda);
+        document.getElementById('res-custo').innerText = formatar(vCompra + vLimpeza);
+        document.getElementById('res-fixo').innerText = formatar(vFixo);
+        document.getElementById('res-lucro').innerText = formatar(lucro);
+        document.getElementById('res-markup').innerText = markup.toFixed(2) + "x";
+    }
+
+    // Iniciar
+    window.onload = smartAdjust;
 </script>
 
 </body>
 </html>
+
