@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Precificação | Jaci Brechó</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8d6e63;
+            --secondary: #d7ccc8;
+            --accent: #5d4037;
+            --bg: #fdfbf9;
+            --text: #3e2723;
+            --white: #ffffff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg); color: var(--text); line-height: 1.6; }
+        
+        .container { max-width: 900px; margin: 40px auto; padding: 20px; }
+        
+        header { text-align: center; margin-bottom: 40px; }
+        header h1 { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--accent); margin-bottom: 10px; }
+        header p { color: var(--primary); font-style: italic; }
+
+        .calculator-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        @media (max-width: 768px) { .calculator-grid { grid-template-columns: 1fr; } }
+
+        .card { background: var(--white); padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .card h2 { margin-bottom: 20px; font-size: 1.2rem; border-bottom: 2px solid var(--secondary); padding-bottom: 10px; }
+
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 5px; }
+        input, select { width: 100%; padding: 12px; border: 1px solid var(--secondary); border-radius: 8px; font-size: 1rem; color: var(--text); }
+        input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px var(--secondary); }
+
+        .checkbox-group { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+        .checkbox-group input { width: auto; }
+
+        .results { background: var(--accent); color: var(--white); }
+        .results h2 { border-color: rgba(255,255,255,0.2); }
+        .result-item { display: flex; justify-content: space-between; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .result-item.total { border-bottom: none; font-size: 1.4rem; font-weight: 700; color: #e0f2f1; margin-top: 20px; }
+        
+        .suggested-prices { margin-top: 30px; }
+        .price-box { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; margin-bottom: 10px; text-align: center; }
+        .price-box span { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+        .price-box strong { font-size: 1.5rem; }
+
+        .badge { background: var(--secondary); color: var(--accent); padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; float: right; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Jaci Brechó</h1>
+        <p>Precificação Inteligente & Sustentável</p>
+    </header>
+
+    <div class="calculator-grid">
+        <div class="card">
+            <h2>Dados da Peça</h2>
+            
+            <div class="form-group">
+                <label>Categoria do Produto</label>
+                <select id="categoria" onchange="calculate()">
+                    <option value="43.13">Vintage</option>
+                    <option value="24.78">Acessório</option>
+                    <option value="48.79">Marcas</option>
+                    <option value="45.60">Calçados</option>
+                    <option value="38.00">Corpo Todo</option>
+                    <option value="40.12">Parte de Cima</option>
+                    <option value="44.08">Parte de Baixo</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Valor de Compra (R$)</label>
+                <input type="number" id="valorCompra" value="10.00" step="0.01" oninput="calculate()">
+            </div>
+
+            <div class="form-group">
+                <label>Embalagem (Média)</label>
+                <input type="number" id="embalagem" value="4.00" step="0.01" oninput="calculate()">
+            </div>
+
+            <div class="form-group">
+                <label>Limpeza</label>
+                <input type="number" id="limpeza" value="1.82" step="0.01" oninput="calculate()">
+            </div>
+
+            <div class="form-group">
+                <label>Reparos / Costureira</label>
+                <input type="number" id="reparos" value="0.00" step="0.01" oninput="calculate()">
+            </div>
+
+            <hr style="margin: 20px 0; border: 0; border-top: 1px solid var(--secondary);">
+
+            <div class="form-group">
+                <label>Custo Fixo Mensal (Base)</label>
+                <input type="number" id="custoFixoMensal" value="1224.45" step="0.01" oninput="calculate()">
+            </div>
+            <div class="form-group">
+                <label>Meta de Peças/Mês</label>
+                <input type="number" id="vendasMes" value="40" oninput="calculate()">
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="aplicarCustoFixo" checked onchange="calculate()">
+                <label for="aplicarCustoFixo">Aplicar Custo Fixo nesta peça?</label>
+            </div>
+        </div>
+
+        <div class="card results">
+            <h2>Resumo de Custos</h2>
+            
+            <div class="result-item">
+                <span>Custo Variável</span>
+                <span id="resVariavel">R$ 0,00</span>
+            </div>
+            
+            <div class="result-item">
+                <span>Rateio Fixo/Peça</span>
+                <span id="resFixo">R$ 0,00</span>
+            </div>
+
+            <div class="result-item total">
+                <span>Custo Total</span>
+                <span id="resTotal">R$ 0,00</span>
+            </div>
+
+            <div class="suggested-prices">
+                <h2>Sugestões de Venda</h2>
+                
+                <div class="price-box">
+                    <span>Lucro 2x (Markup)</span>
+                    <strong id="preco2x">R$ 0,00</strong>
+                </div>
+
+                <div class="price-box">
+                    <span>Lucro 3x (Markup)</span>
+                    <strong id="preco3x">R$ 0,00</strong>
+                </div>
+
+                <div class="price-box" style="background: #4caf50;">
+                    <span>Margem 30% (Comercial)</span>
+                    <strong id="precoMargem">R$ 0,00</strong>
+                </div>
+
+                <div style="margin-top: 20px; font-size: 0.85rem; opacity: 0.8; text-align: center;">
+                    Ticket Médio da Categoria: <span id="resTicketMedio">R$ 0,00</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function calculate() {
+        // Inputs
+        const valorCompra = parseFloat(document.getElementById('valorCompra').value) || 0;
+        const embalagem = parseFloat(document.getElementById('embalagem').value) || 0;
+        const limpeza = parseFloat(document.getElementById('limpeza').value) || 0;
+        const reparos = parseFloat(document.getElementById('reparos').value) || 0;
+        const custoFixoMensal = parseFloat(document.getElementById('custoFixoMensal').value) || 0;
+        const vendasMes = parseInt(document.getElementById('vendasMes').value) || 1;
+        const aplicarFixo = document.getElementById('aplicarCustoFixo').checked;
+        const ticketMedio = parseFloat(document.getElementById('categoria').value);
+
+        // Cálculos
+        const custoVariavel = valorCompra + embalagem + limpeza + reparos;
+        const custoFixoUnitario = aplicarFixo ? (custoFixoMensal / vendasMes) : 0;
+        const custoTotal = custoVariavel + custoFixoUnitario;
+
+        // Sugestões de Preço
+        const preco2x = custoTotal * 2;
+        const preco3x = custoTotal * 3;
+        const precoMargem30 = custoTotal / (1 - 0.30); // Margem de 30% sobre o preço final
+
+        // Atualizar UI
+        document.getElementById('resVariavel').innerText = 'R$ ' + custoVariavel.toFixed(2);
+        document.getElementById('resFixo').innerText = 'R$ ' + custoFixoUnitario.toFixed(2);
+        document.getElementById('resTotal').innerText = 'R$ ' + custoTotal.toFixed(2);
+        
+        document.getElementById('preco2x').innerText = 'R$ ' + preco2x.toFixed(2);
+        document.getElementById('preco3x').innerText = 'R$ ' + preco3x.toFixed(2);
+        document.getElementById('precoMargem').innerText = 'R$ ' + precoMargem30.toFixed(2);
+        document.getElementById('resTicketMedio').innerText = 'R$ ' + ticketMedio.toFixed(2);
+    }
+
+    // Inicializar
+    calculate();
+</script>
+
+</body>
+</html>
